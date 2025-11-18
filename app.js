@@ -40,6 +40,15 @@ app.get('/api/v1/movies/:id/', (req, res) => {
   let movie = movies.find((el) => el.id === id)
   console.log('movie encontrado:', movie)
 
+
+  //if is no movie object found, show the error message 
+  if (!movie) {
+    return res.status(404).json({
+      status: 'fail',
+      message: `the movie with ${id} was not found!`
+    })
+  }
+
   res.status(200).json({
     status: 'success',
     data: {
@@ -83,6 +92,14 @@ app.post('/api/v1/movies', (req, res) => {
 })
 
 console.log('terminou de atualizar o json com o novo filme')
+
+
+//PATCH METHOD
+app.patch('api/v1/movies/:id', (req, res) => {
+  const id = Number(req.params.id)
+
+  
+})
 
 //create a server
 const port = 3000;
