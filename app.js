@@ -96,7 +96,7 @@ console.log('terminou de atualizar o json com o novo filme')
 
 //PATCH METHOD
 //we want to update thte movie based on its id
-const updateMovie = (req, res) => {
+const pacthMovie = (req, res) => {
   const id = Number(req.params.id)
   console.log('id retornado:', id)
 
@@ -128,14 +128,13 @@ const updateMovie = (req, res) => {
   
 }
 
-app.patch('/api/v1/movies/:id', updateMovie)
-
 //delete method
 const deleteMovie = (req, res)=> {
   //getting the id
   const id = Number(req.params.id);
   const movieToDelete = movies.find(el => Number(el.id) === id);
 
+  //if the id does not exists, the message below will appear 
   if(!movieToDelete) return res.status(404).json({
     status: 'failed',
     message: `There is no movie with the id: ${id}`
@@ -150,19 +149,28 @@ const deleteMovie = (req, res)=> {
       message: `the movie with id ${id} was deleted successfully`,
       data: {
         movie: null
-      }
+      } 
     })
   })
 
 }
 
-app.get('/api/v1/movies', getAllMovies)
+// app.get('/api/v1/movies', getAllMovies)
+// app.get('/api/v1/movies/:id/', getMovieById)
+// app.post('/api/v1/movies', createMovie)
+// app.patch('/api/v1/movies/:id/', pacthMovie)
+// app.delete('/api/v1/movies/:id', deleteMovie)
 
-app.get('/api/v1/movies/:id/', getMovieById)
+//creating a route for get and post 
+app.route('/api/v1/movies')
+  .get(getAllMovies)
+  .post(createMovie)
 
-app.post('/api/v1/movies', createMovie)
-
-app.delete('/api/v1/movies/:id', deleteMovie)
+//creating a route for the id
+app.route('/api/v1/movies/:id/')
+  .get(getMovieById)
+  .patch(pacthMovie)
+  .delete(deleteMovie);
 
 
 //create a server
