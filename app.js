@@ -10,12 +10,19 @@ let app = express()
   //   // res.status(200).send('<h1>hello from express server</h1>'); //sending html
   //   res.status(200).json({ message: 'hello, world', status: 200 }) //sending a JSON object
   // });
+
+
+const logger = function (req, res, next) {
+  console.log('custom middleware called!')
+  next()
+}
   
 app.use(express.json())
+app.use(logger)
   
 const movies = JSON.parse(fs.readFileSync('./data/movies.json'))
 
-const getAllMovies = (req, res) => {
+app.get('/api/v1/movies', (req, res) => {
   //jset json formating
   res.status(200).json({
     status: 'success',
@@ -24,13 +31,13 @@ const getAllMovies = (req, res) => {
       movies: movies
     }
   })
-}
+})
 
 //get - getting the id with params
 
 //the route handle function receives two parameters (request and response)
 
-const getMovieById = (req, res) => {
+app.get('/api/v1/movies/:id/', (req, res) => {
   // console.log(req.params)
 
   //get and convert the id to number
@@ -57,7 +64,7 @@ const getMovieById = (req, res) => {
   });
 
   res.send('test without optional parameter')
-}
+})
 
 //optional parameter
 app.get('/api/v1/movies/:id/:name/:x', (req, res) => {
@@ -66,7 +73,7 @@ app.get('/api/v1/movies/:id/:name/:x', (req, res) => {
 })
 
 //post request
-const createMovie = (req, res) => {
+app.post('/api/v1/movies', (req, res) => {
   // console.log(req.body)
   const newID = Number(movies[movies.length - 1].id) + 1;
   console.log(newID)
@@ -89,89 +96,17 @@ const createMovie = (req, res) => {
       }
     })
   })
-}
+})
 
 console.log('terminou de atualizar o json com o novo filme')
 
 
 //PATCH METHOD
-//we want to update thte movie based on its id
-const pacthMovie = (req, res) => {
+app.patch('api/v1/movies/:id', (req, res) => {
   const id = Number(req.params.id)
-  console.log('id retornado:', id)
 
-  const movieToUpdate = movies.find((el) => Number(el.id) === id)
-  console.log('movie retornado:', movieToUpdate)
-
-  if(!movieToUpdate){
-    return res.status(404).json({
-      status: 'failed',
-      message: `No movie object with ID: ${id} was found.`
-    })
-  }
-
-  const movieIndex = movies.indexOf(movieToUpdate)
-  console.log('index retornado:', movieIndex)
-
-  Object.assign(movieToUpdate, req.body)
-
-  movies[movieIndex] = movieToUpdate
-
-  fs.writeFile('./data/movies.json', JSON.stringify(movies), (err)=> {
-    res.status(200).json({
-      status: "success",
-      data: {
-        movie: movieToUpdate
-      }
-    })
-  })
   
-}
-
-//delete method
-const deleteMovie = (req, res)=> {
-  //getting the id
-  const id = Number(req.params.id);
-  const movieToDelete = movies.find(el => Number(el.id) === id);
-
-  //if the id does not exists, the message below will appear 
-  if(!movieToDelete) return res.status(404).json({
-    status: 'failed',
-    message: `There is no movie with the id: ${id}`
-  })
-
-  const movieIndex = movies.indexOf(movieToDelete)
-  movies.splice(movieIndex, 1);
-
-  fs.writeFile('./data/movies.json', JSON.stringify(movies), (err)=> {
-    res.status(204).json({
-      status: 'success',
-      message: `the movie with id ${id} was deleted successfully`,
-      data: {
-        movie: null
-      } 
-    })
-  })
-
-}
-
-// app.get('/api/v1/movies', getAllMovies)
-// app.get('/api/v1/movies/:id/', getMovieById)
-// app.post('/api/v1/movies', createMovie)
-// app.patch('/api/v1/movies/:id/', pacthMovie)
-// app.delete('/api/v1/movies/:id', deleteMovie)
-
-//creating a route for get and post 
-app.route('/api/v1/movies')
-  .get(getAllMovies)
-  .post(createMovie)
-
-//creating a route for the id
-app.route('/api/v1/movies/:id/')
-  .get(getMovieById)
-  .patch(pacthMovie)
-  .delete(deleteMovie);
-
+})
 
 //create a server
 const port = 3000;
