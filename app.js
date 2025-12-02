@@ -1,6 +1,7 @@
 const express = require('express')
 const fs = require('fs')
 let app = express()
+const morgan = require(`morgan`)
 
 
 //route = http method + url
@@ -13,19 +14,28 @@ let app = express()
 
 
 const logger = function (req, res, next) {
-  console.log('custom middleware called!')
+  console.log(`custom middleware called`)
   next()
 }
-  
+
 app.use(express.json())
+
+// using morgan
+app.use(morgan('dev'))
+
 app.use(logger)
-  
+app.use((req, res, next) => {
+  req.requestedAt = new Date().toISOString()
+  next()
+})
+
 const movies = JSON.parse(fs.readFileSync('./data/movies.json'))
 
 app.get('/api/v1/movies', (req, res) => {
   //jset json formating
   res.status(200).json({
     status: 'success',
+    requestedAt: req.requestedAt,
     count: movies.length,
     data: {
       movies: movies
