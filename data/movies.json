@@ -1,1 +1,44 @@
-[{"id":"1","nome":"die hard","realeaseYear:":"1998","duration":"90"},{"id":"2","nome":"die hard 2","realeaseYear:":"1998","duration":"80"},{"id":"3","nome":"die hard 3","realeaseYear:":"2000","duration":"60"},{"id":4,"nome":"die hard 4","realeaseYear:":"2002","duration":"99"}]
+[
+    {
+        "id": "1",
+        "nome": "die hard",
+        "realeaseYear:": "1998",
+        "duration": "90"
+    },
+    {
+        "id": "2",
+        "nome": "die hard 2",
+        "realeaseYear:": "1998",
+        "duration": "80"
+    },
+    {
+        "id": "3",
+        "nome": "die hard 3",
+        "realeaseYear:": "2000",
+        "duration": "60"
+    },
+    {
+        "id": "31",
+        "name": "getulio o filme",
+        "realeaseYear": "2011",
+        "duration": 200
+    },
+    {
+        "id": "311",
+        "name": "teste 2",
+        "realeaseYear": "2021",
+        "duration": 100
+    },
+    {
+        "id": 312,
+        "name": "teste 3",
+        "realeaseYear": "2022",
+        "duration": 77
+    },
+    {
+        "id": 313,
+        "name": "teste 3",
+        "realeaseYear": "2022",
+        "duration": 77
+    }
+]

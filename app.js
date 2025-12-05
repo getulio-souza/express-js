@@ -112,9 +112,28 @@ console.log('terminou de atualizar o json com o novo filme')
 
 
 //PATCH METHOD
-app.patch('api/v1/movies/:id', (req, res) => {
+//we want to update thte movie based on its id
+app.patch('/api/v1/movies/:id', (req, res) => {
   const id = Number(req.params.id)
 
+  const movieToUpdate = movies.find((el) => Number(el.id) === id)
+  console.log('movie retornado:', movieToUpdate)
+
+  const movieIndex = movies.indexOf(movieToUpdate)
+  console.log('index retornado:', movieIndex)
+
+  Object.assign(movieToUpdate, req.body)
+
+  movies[movieIndex] = movieToUpdate
+
+  fs.writeFile('./data/movies.json', JSON.stringify(movies), (err)=> {
+    res.status(200).json({
+      status: "success",
+      data: {
+        movie: movieToUpdate
+      }
+    })
+  })
   
 })
 
