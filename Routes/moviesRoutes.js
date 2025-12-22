@@ -4,17 +4,18 @@ const moviesRouter = express.Router()
 
 const router = express.Router()
 
-router.param('id', (req, res, next, value) => {
-  console.log(`movie id is ${value}`);
-  next()
-})
+router.param('id', moviesController.checkId)
 
 router.route('/')
   .get(moviesController.getAllMovies)
-  .post(moviesController.createMovie)
 
+  //calling the validate body middleware
+  .post(moviesController.validateBody, moviesController.createMovie)
+
+  //setting the routes
 router.route('/:id')
   .get(moviesController.getMovieById)
   .patch(moviesController.updateMovie)
+  .delete(moviesController.deleteMovie)
 
 module.exports = router;

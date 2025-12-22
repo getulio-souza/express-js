@@ -1,8 +1,30 @@
 const fs = require('fs')
 const path = require('path')
+const { json } = require('stream/consumers')
 
 const moviesPath = path.join(__dirname, '..', 'data', 'movies.json')
 const movies = JSON.parse(fs.readFileSync(moviesPath, 'utf-8'))
+
+
+//a param middleware receives the request object, the response object, 
+// the next functions and a value (returns the id) 
+exports.checkId = (req, res, next, value) => {
+  console.log(`movie id is: ${value}`)
+
+  let movie = movies.find(movie => Number(movie.id) === Number(value))
+ 
+  if (!movie) {
+    //its important to always use the return inside the if to avoid errors
+    return res.status(404).json({
+      status: "fail",
+      message: `movie with id: ${value} was not found`
+    })
+  }
+
+  next()
+}
+
+//middleware to validate post request
 
 //get all movies
 exports.getAllMovies = (req, res) => {
@@ -31,12 +53,12 @@ exports.getMovieById = (req, res) => {
 
 
   //if is no movie object found, show the error message 
-  if (!movie) {
-    return res.status(404).json({
-      status: 'fail',
-      message: `the movie with ${id} was not found!`
-    })
-  }
+  // if (!movie) {
+  //   return res.status(404).json({
+  //     status: 'fail',
+  //     message: `the movie with ${id} was not found!`
+  //   })
+  // }
 
   res.status(200).json({
     status: 'success',
@@ -48,7 +70,6 @@ exports.getMovieById = (req, res) => {
 
 //post request
 exports.createMovie = (req, res) => {
-  // console.log(req.body)
   const newID = Number(movies[movies.length - 1].id) + 1;
   console.log(newID)
 
@@ -71,6 +92,19 @@ exports.createMovie = (req, res) => {
       }
     })
   })
+}
+
+exports.validateBody = (req, res, next) => {
+  //if the request body doesnt have a name fiel or release year, the json object will be sent in the response
+  if (!req.body || !req.body.name || !req.body.releaseYear) {
+    return res.status(400).json({
+      status: 'failed',
+      message: 'not a valid movie data'
+    })
+  } else {
+    //if the request body have a name and a release year, calls the next method
+    next()
+  }
 }
 
 //PATCH METHOD
@@ -96,4 +130,21 @@ exports.updateMovie = (req, res) => {
       }
     })
   })
+}
+
+//delete movie
+exports.deleteMovie = (req, res) => {
+  const id = req.params.id * 1;
+  const movieToDelete = movies.find(el => el.id === id);
+
+  // if (!movieToDelete) {
+  //   return res.status(404).json({
+  //     status: 'fail',
+  //     message: `No movie with the id ${id} was found to delete`
+  //   })
+  // }
+
+  const index = movies.indexOf(movieToDelete)
+
+  movies.splice(index, 1)
 }
